@@ -3,32 +3,26 @@ import numpy as np
 from closestpair import closestpair
 from math import floor
 from utils import *
-from matplotlib import pyplot as plt
 
-if __name__ == '__main__' :
 
-    im_src = cv2.imread('img.jpg')
-    im_resized, scale = scale_image_for_display(im_src)
-    cv2.imshow('Image', im_resized)
-    cv2.moveWindow('Image', 30, 0)
-    pts_src = get_four_points(im_resized)
-    cv2.destroyWindow('Image')
-
-    pts_src = pts_src / scale
+def document_transformation(im_src, pts_src):
     pts_src_c = np.copy(pts_src)
 
     w_h = 8.5 / 11.0
 
-    width = floor(np.linalg.norm(np.diff(np.array(closestpair(pts_src)), axis=0), ord=2))
+    width = floor(np.linalg.norm(
+        np.diff(np.array(closestpair(pts_src)), axis=0), ord=2))
     height = floor(width / w_h)
 
     center = np.mean(np.array(pts_src_c), axis=0)
-    rads = [(np.arctan2(pt[1]-center[1], pt[0]-center[0]), pt) for pt in pts_src_c]
-    rads = sorted(rads, key = lambda t: t[0])
+    rads = [(np.arctan2(pt[1] - center[1], pt[0] - center[0]), pt)
+            for pt in pts_src_c]
+    rads = sorted(rads, key=lambda t: t[0])
     pts = np.array([t[1] for t in rads])
 
-    im_dst = np.zeros((width, height))
-    pts_dst = np.array([[0, 0], [width - 1, 0], [width - 1, height - 1], [0, height - 1]])
+    # im_dst = np.zeros((width, height))
+    pts_dst = np.array(
+        [[0, 0], [width - 1, 0], [width - 1, height - 1], [0, height - 1]])
 
     h, status = cv2.findHomography(pts, pts_dst)
 
@@ -37,10 +31,24 @@ if __name__ == '__main__' :
     im_lab = cv2.cvtColor(im_warpped, cv2.COLOR_BGR2Lab)
 
     C = 10
-    im_out = cv2.adaptiveThreshold(im_lab[:,:,0], 255,
+    im_out = cv2.adaptiveThreshold(im_lab[:, :, 0], 255,
                                    cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
                                    cv2.THRESH_BINARY,
                                    floor(width / 3 / 2) * 2 + 1, C)
+
+    return im_out
+
+
+if __name__ == '__main__':
+    im_src = cv2.imread('img.jpg')
+    im_resized, scale = scale_image_for_display(im_src)
+    cv2.imshow('Image', im_resized)
+    cv2.moveWindow('Image', 30, 0)
+    pts_src = get_four_points(im_resized)
+    cv2.destroyWindow('Image')
+    pts_src = pts_src / scale
+
+    im_out = document_transformation(im_src, pts_src)
 
     im_resized, _ = scale_image_for_display(im_out)
     cv2.imshow('Image', im_resized)
