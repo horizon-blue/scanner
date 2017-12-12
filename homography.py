@@ -2,22 +2,17 @@ import cv2
 import numpy as np
 from closestpair import closestpair
 from math import floor
-from utils import get_four_points
+from utils import *
+from matplotlib import pyplot as plt
 
 if __name__ == '__main__' :
 
     im_src = cv2.imread('img.jpg')
-    size = np.array(im_src.shape[0:2])
-    scale = 500 / np.max(size)
-    im_resized = cv2.resize(im_src, (floor(size[1] * scale), floor(size[0] * scale)))
-    cv2.imshow("Image", im_resized)
+    im_resized, scale = scale_image_for_display(im_src)
+    cv2.imshow('Image', im_resized)
+    cv2.moveWindow('Image', 30, 0)
     pts_src = get_four_points(im_resized)
-    print(pts_src)
-    # pts_src = [[  42,  56 ],
-    #            [  46, 468 ],
-    #            [ 366, 462 ],
-    #            [ 357,  51 ]]
-    # pts_src = [(141, 131), (480, 159), (493, 630), (64, 601)]
+    cv2.destroyWindow('Image')
 
     pts_src = pts_src / scale
     pts_src_c = np.copy(pts_src)
@@ -32,17 +27,25 @@ if __name__ == '__main__' :
     rads = sorted(rads, key = lambda t: t[0])
     pts = np.array([t[1] for t in rads])
 
-    print(pts)
-
     im_dst = np.zeros((width, height))
     pts_dst = np.array([[0, 0], [width - 1, 0], [width - 1, height - 1], [0, height - 1]])
 
     h, status = cv2.findHomography(pts, pts_dst)
 
-    # Warp source image to destination based on homography
-    im_out = cv2.warpPerspective(im_src, h, (width, height))
+    im_warpped = cv2.warpPerspective(im_src, h, (width, height))
 
-    # Display images
-    cv2.imshow("Warped Source Image", im_out)
+    im_lab = cv2.cvtColor(im_warpped, cv2.COLOR_BGR2Lab)
+
+    C = 10
+    im_out = cv2.adaptiveThreshold(im_lab[:,:,0], 255,
+                                   cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                   cv2.THRESH_BINARY,
+                                   floor(width / 3 / 2) * 2 + 1, C)
+
+    im_resized, _ = scale_image_for_display(im_out)
+    cv2.imshow('Image', im_resized)
+    cv2.moveWindow('Image', 30, 0)
 
     cv2.waitKey(0)
+
+    cv2.destroyAllWindows()

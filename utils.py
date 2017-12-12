@@ -1,7 +1,8 @@
-# https://github.com/spmallick/learnopencv/blob/master/Homography/utils.py
-
 import cv2
 import numpy as np
+from math import floor
+
+# https://github.com/spmallick/learnopencv/blob/master/Homography/utils.py
 
 def mouse_handler(event, x, y, flags, data) :
 
@@ -27,3 +28,9 @@ def get_four_points(im):
     points = np.vstack(data['points']).astype(float)
 
     return points
+
+def scale_image_for_display(im_src, WINDOW = 800):
+    size = np.array(im_src.shape[0:2])
+    scale = WINDOW / np.max(size)
+    im_resized = cv2.resize(im_src, (floor(size[1] * scale), floor(size[0] * scale)))
+    return im_resized, scale
