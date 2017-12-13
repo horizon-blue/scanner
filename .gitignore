@@ -12,3 +12,5 @@ CTestTestfile.cmake
 
 # Scanner
 scanner
+results/
+source/
