@@ -5,7 +5,7 @@ from math import floor
 from utils import *
 
 
-def document_transformation(im_src, pts_src, w_h = 0.77):
+def document_transformation(im_src, pts_src, w_h = 0.77, erosion = 0.95):
     pts_src_c = np.copy(pts_src)
 
     width = floor(np.linalg.norm(
@@ -13,6 +13,7 @@ def document_transformation(im_src, pts_src, w_h = 0.77):
     height = floor(width / w_h)
 
     center = np.mean(np.array(pts_src_c), axis=0)
+    print(pts_src_c)
     rads = [(np.arctan2(pt[1] - center[1], pt[0] - center[0]), pt)
             for pt in pts_src_c]
     rads = sorted(rads, key=lambda t: t[0])
