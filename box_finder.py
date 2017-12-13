@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from utils import *
+from sys import argv, exit
 
 # with some reference to
 # https://stackoverflow.com/questions/8667818/opencv-c-obj-c-detecting-a-sheet-of-paper-square-detection
@@ -42,7 +43,10 @@ def get_rectangle(im_src):
 
 
 if __name__ == '__main__':
-    im_src = cv2.imread('img.jpg')
+    if len(argv) != 2:
+        print("Usage: python3 box_finder.py <image_file>")
+        exit(1)
+    im_src = cv2.imread(argv[1])
     im_resized, scale = scale_image_for_display(im_src)
     cv2.imshow('Image', im_resized)
     cv2.moveWindow('Image', 30, 0)
