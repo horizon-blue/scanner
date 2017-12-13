@@ -37,7 +37,7 @@ if __name__ == '__main__':
     pts_src = get_rectangle(im_src)
 
     img = cv2.drawContours(
-        im_src, [pts_src], -1, (255, 180, 50), thickness=10)
+        im_src.copy(), [pts_src], -1, (255, 180, 50), thickness=10)
 
     im_resized, _ = scale_image_for_display(img)
     cv2.imshow('Image', im_resized)
