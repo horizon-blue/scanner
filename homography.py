@@ -28,13 +28,15 @@ def document_transformation(im_src, pts_src):
 
     im_warpped = cv2.warpPerspective(im_src, h, (width, height))
 
+    im_out = im_warpped
+
     im_lab = cv2.cvtColor(im_warpped, cv2.COLOR_BGR2Lab)
 
     C = 10
-    im_out = cv2.adaptiveThreshold(im_lab[:, :, 0], 255,
+    im_binary = cv2.adaptiveThreshold(im_lab[:, :, 0], 255,
                                    cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
                                    cv2.THRESH_BINARY,
                                    floor(width / 3 / 2) * 2 + 1, C)
 
-    return im_out
+    return im_out, im_binary, h
 

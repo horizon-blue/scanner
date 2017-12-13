@@ -9,18 +9,15 @@ def ocr(im):
     if len(tools) == 0:
         print("No OCR tool found")
         sys.exit(1)
-    # The tools are returned in the recommended order of usage
     tool = tools[0]
-    print("Will use tool '%s'" % (tool.get_name()))
-    # Ex: Will use tool 'libtesseract'
+    # print("Will use tool '%s'" % (tool.get_name()))
 
-    langs = tool.get_available_languages()
-    print("Available languages: %s" % ", ".join(langs))
+    # langs = tool.get_available_languages()
     lang = 'eng'
-    print("Will use lang '%s'" % (lang))
+    # print("Will use lang '%s'" % (lang))
 
     return tool.image_to_string(
         Image.fromarray(im),
         lang=lang,
-        builder=pyocr.builders.TextBuilder()
+        builder=pyocr.builders.LineBoxBuilder()
     )
