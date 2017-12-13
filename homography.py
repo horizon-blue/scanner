@@ -5,10 +5,8 @@ from math import floor
 from utils import *
 
 
-def document_transformation(im_src, pts_src):
+def document_transformation(im_src, pts_src, w_h = 0.77):
     pts_src_c = np.copy(pts_src)
-
-    w_h = 8.5 / 11.0
 
     width = floor(np.linalg.norm(
         np.diff(np.array(closestpair(pts_src)), axis=0), ord=2))

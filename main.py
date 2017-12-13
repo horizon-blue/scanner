@@ -19,7 +19,7 @@ logger.addHandler(ch)
 translator = Translator(to_lang = 'zh')
 
 if __name__ == '__main__':
-    im_src = cv2.imread('img.jpg')
+    im_src = cv2.imread('img4.jpg')
     im_resized, scale = scale_image_for_display(im_src)
     cv2.imshow('Image', im_resized)
     cv2.moveWindow('Image', 30, 0)
@@ -28,7 +28,8 @@ if __name__ == '__main__':
     pts_src = pts_src / scale
 
     logger.info('transforming im')
-    im_out, im_binary, h = document_transformation(im_src, pts_src)
+    im_out, im_binary, h = document_transformation(im_src, pts_src, w_h = 1.3)
+    cv2.imwrite('result/transofrm.jpg', im_binary);
 
     # im_resized, _ = scale_image_for_display(im_binary)
     # cv2.imshow('Image', im_resized)
@@ -53,11 +54,13 @@ if __name__ == '__main__':
     logger.info('translating')
     im_font = Image.new('RGB', (im_binary.shape[1], im_binary.shape[0]), 'black')
     draw = ImageDraw.Draw(im_font)
-    font = ImageFont.truetype('NotoSansCJKsc-Medium.otf', 15)
+    alpha = 0.8
     for box in boxes:
         print('translating', box.content)
         translation = translator.translate(box.content)
 
+        print(box.position, floor((box.position[1][1] - box.position[0][1]) * alpha))
+        font = ImageFont.truetype('NotoSansCJKsc-Medium.otf', floor((box.position[1][1] - box.position[0][1]) * alpha))
         draw.text(box.position[0], translation, font=font, fill='white')
     del draw
     im_font = cv2.cvtColor(np.array(im_font), cv2.COLOR_RGB2BGR)
