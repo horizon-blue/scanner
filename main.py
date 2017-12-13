@@ -36,19 +36,14 @@ if __name__ == '__main__':
 
     pts_src = get_rectangle(im_src)
 
-    img = cv2.drawContours(
+    im_contour = cv2.drawContours(
         im_src.copy(), [pts_src], -1, (255, 180, 50), thickness=10)
-
-    im_resized, _ = scale_image_for_display(img)
-    cv2.imshow('Image', im_resized)
-    cv2.moveWindow('Image', 30, 0)
-    cv2.waitKey(0)
-    cv2.destroyWindow('Image')
+    cv2.imwrite('result/contour.jpg', im_contour)
 
     pts_src = [(p[0, 0], p[0, 1]) for p in pts_src]
 
     logger.info('transforming im')
-    im_out, im_binary, h = document_transformation(im_src, pts_src)
+    im_out, im_binary, h = document_transformation(im_src, pts_src, erosion=0.99, w_h=3.7)
     cv2.imwrite('result/transofrm.jpg', im_binary)
 
     # im_resized, _ = scale_image_for_display(im_binary)
@@ -103,6 +98,7 @@ if __name__ == '__main__':
     ret, mask = cv2.threshold(im_font_gray, 127, 255, cv2.THRESH_BINARY)
     mask_inv = cv2.bitwise_not(mask)
     img_bg = cv2.bitwise_and(im_inpaint, im_inpaint, mask=mask)
+    # im_font = cv2.bitwise_not(im_font)
     img_fg = cv2.bitwise_and(im_font, im_font, mask=mask_inv)
     im_mixed = cv2.add(img_bg, img_fg)
 

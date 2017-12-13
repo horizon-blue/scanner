@@ -14,7 +14,7 @@ def document_transformation(im_src, pts_src, w_h = 0.77, erosion = 0.97):
     height = floor(width / w_h)
 
     center = np.mean(np.array(pts_src_c), axis=0)
-    pts_src_c = (pts_src_c - center) * 0.95 + center
+    pts_src_c = (pts_src_c - center) * erosion + center
     rads = [(np.arctan2(pt[1] - center[1], pt[0] - center[0]), pt)
             for pt in pts_src_c]
     rads = sorted(rads, key=lambda t: t[0])

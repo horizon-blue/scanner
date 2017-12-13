@@ -23,7 +23,7 @@ def get_rectangle(im_src):
 
     # find the out-most contour
     _, contours, _ = cv2.findContours(
-        img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     # for debug:
     # img = cv2.drawContours(im_src, contours, 0, (255, 180, 50), thickness=10)
 
