@@ -34,13 +34,22 @@ if __name__ == '__main__':
     cv2.waitKey(0)
     cv2.destroyWindow('Image')
 
-    pts_src = [(p[0, 0], p[0, 1]) for p in get_rectangle(im_src)]
+    pts_src = get_rectangle(im_src)
 
-    print(pts_src)
+    img = cv2.drawContours(
+        im_src, [pts_src], -1, (255, 180, 50), thickness=10)
+
+    im_resized, _ = scale_image_for_display(img)
+    cv2.imshow('Image', im_resized)
+    cv2.moveWindow('Image', 30, 0)
+    cv2.waitKey(0)
+    cv2.destroyWindow('Image')
+
+    pts_src = [(p[0, 0], p[0, 1]) for p in pts_src]
 
     logger.info('transforming im')
-    im_out, im_binary, h = document_transformation(im_src, pts_src, w_h = 1.3)
-    cv2.imwrite('result/transofrm.jpg', im_binary);
+    im_out, im_binary, h = document_transformation(im_src, pts_src)
+    cv2.imwrite('result/transofrm.jpg', im_binary)
 
     # im_resized, _ = scale_image_for_display(im_binary)
     # cv2.imshow('Image', im_resized)
@@ -73,8 +82,10 @@ if __name__ == '__main__':
         print('translating', box.content)
         translation = translator.translate(box.content)
 
-        print(box.position, floor((box.position[1][1] - box.position[0][1]) * alpha))
-        font = ImageFont.truetype('NotoSansCJKsc-Medium.otf', floor((box.position[1][1] - box.position[0][1]) * alpha))
+        print(box.position, floor(
+            (box.position[1][1] - box.position[0][1]) * alpha))
+        font = ImageFont.truetype(
+            'NotoSansCJKsc-Medium.otf', floor((box.position[1][1] - box.position[0][1]) * alpha))
         draw.text(box.position[0], translation, font=font, fill='white')
     del draw
     im_font = cv2.cvtColor(np.array(im_font), cv2.COLOR_RGB2BGR)
